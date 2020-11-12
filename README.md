@@ -6,6 +6,7 @@ Integrantes del equipo
 Andrés Felipe Molina Mahecha 
 - Correo: a.molinam@uniandes.edu.co 
 - Código: 201923434
+
 Edgar Geovanny Parra Triana 
 - Correo: e.parra@uniandes.edu.co 
 - Código: 202014668
