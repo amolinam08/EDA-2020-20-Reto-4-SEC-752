@@ -50,5 +50,3 @@ recae sobre el controlador.
 #  Funciones para consultas
 # ___________________________________________________
 
-
-#lets go###
