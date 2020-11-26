@@ -42,8 +42,12 @@ operación seleccionada.
 # ___________________________________________________
 #  Variables
 # ___________________________________________________
-initialStation = None
-recursionLimit = 20000
+
+citiB1 = "201801-1-citibike-tripdata.csv"
+#citiB2 = "201801-2-citibike-tripdata.csv"
+#citiB3 = "201801-3-citibike-tripdata.csv"
+#citiB4 = "201801-4-citibike-tripdata.csv"
+
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
@@ -53,20 +57,23 @@ def print_menu():
     print("Bienvenido")
     print("1- Inicializar Analizador.")
     print("2- Cargar información de bicicletas de Nueva York.")
-    print("3- Cantidad de clusters de Viajes.")
+    print("3- Cantidad de clusters de viajes.")
+    print("4- Conocer rutas circulares.")
+    print("5- Recomendador de rutas.")
+    print("6- Ruta de interes turistico.")
     print("0- Salir.")
 
-def option_two():
+def Opt2():
     print("\nCargando información...")
-    controller.loadTrips(cont)
+    controller.loadTrips(cont. citiB1)
     num_edges = controller.totalConnections(cont)
     num_vertex = controller.totalStops(cont)
-    print('Numero de vertices en el grafo: ' + str(numvertex))
-    print('Numero de arcos en el grafo: ' + str(numedges))
+    print('Numero de vertices en el grafo es: ' + str(numvertex))
+    print('Numero de arcos en el grafo es: ' + str(numedges))
   
 
 
-def option_three():
+def Opt3():
     print("Se verificara si las estaciones pertenecen al mismo cluster")
     stat1 = input("Ingrese el ID de la primera estación: ")
     stat2 = input("Ingrese el ID de la segunda estación: ")
@@ -75,7 +82,7 @@ def option_three():
         same = "si"
     else:
         same ="no"
-    print('Las estaciones ',same," estan en el mismo cluster")
+    print('Las estaciones '+same+" estan en el mismo cluster")
     
 while True:
     printMenu()
@@ -86,10 +93,10 @@ while True:
         # cont es el controlador que se usará de acá en adelante
         cont = controller.init()
     elif int(inputs[0]) == 2:
-        executiontime = timeit.timeit(option_two, number=1)
+        executiontime = timeit.timeit(Opt2, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
     elif int(inputs[0]) == 3:
-        executiontime = timeit.timeit(option_three, number=1)
+        executiontime = timeit.timeit(Opt3, number=1)
         print("Tiempo de ejecución: " + str(executiontime))
     else:
         sys.exit(0)
