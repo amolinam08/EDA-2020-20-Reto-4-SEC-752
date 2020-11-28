@@ -29,6 +29,7 @@ import sys
 import config
 from App import controller
 from DISClib.ADT import stack
+import config as cf
 import timeit
 assert config
 
@@ -43,47 +44,76 @@ operación seleccionada.
 #  Variables
 # ___________________________________________________
 
-citiB1 = "201801-1-citibike-tripdata.csv"
-#citiB2 = "201801-2-citibike-tripdata.csv"
-#citiB3 = "201801-3-citibike-tripdata.csv"
-#citiB4 = "201801-4-citibike-tripdata.csv"
+citiB = "201801-1-citibike-tripdata.csv"
+#citiB = "201801-2-citibike-tripdata.csv"
+#citiB = "201801-3-citibike-tripdata.csv"
+#citiB = "201801-4-citibike-tripdata.csv"
 
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
 
-def print_menu():
+def printMenu():
     print("\n")
     print("Bienvenido")
     print("1- Inicializar Analizador.")
-    print("2- Cargar información de bicicletas de Nueva York.")
+    print("2- Cargar información de CitiBike")
     print("3- Cantidad de clusters de viajes.")
-    print("4- Conocer rutas circulares.")
+    print("4- Conocer estaciones criticas.")
     print("5- Recomendador de rutas.")
     print("6- Ruta de interes turistico.")
     print("0- Salir.")
 
 def Opt2():
+
     print("\nCargando información...")
-    controller.loadTrips(cont. citiB1)
-    num_edges = controller.totalConnections(cont)
-    num_vertex = controller.totalStops(cont)
+    controller.loadFile(citiB,tripfile)
+    num_edges = controller.totalTrips(cont)
+    num_vertex = controller.totalStations(cont)
     print('Numero de vertices en el grafo es: ' + str(numvertex))
     print('Numero de arcos en el grafo es: ' + str(numedges))
+    print("El limite de recursion actual: " + str(sys.getrecursionlimit()))
+    sys.setrecursionlimit(recursionLimit)
+    print("El limite de recursion se ajusta a: " + str(recursionLimit))
   
 
 
 def Opt3():
-    print("Se verificara si las estaciones pertenecen al mismo cluster")
-    stat1 = input("Ingrese el ID de la primera estación: ")
-    stat2 = input("Ingrese el ID de la segunda estación: ")
-    same = controller.sameCluster(cont, stat1,stat2)
-    if same = True:
-        same = "si"
+
+    starting_station = input('\nID primera estación: ')
+    ending_station = input('ID segunda estación: ')
+    print('El número de componentes conectados es: ' + str(controller.connectedComponents(cont)))
+    sc = controller.sameCC(cont, starting_station, ending_station)
+    if (sc == True):
+        print('Las estaciones ' + starting_station +' y ' + ending_station + ' pertenecen al mismo cluster')
     else:
-        same ="no"
-    print('Las estaciones '+same+" estan en el mismo cluster")
+        print('Las estaciones ' + ending_station  +' y ' + starting_station + ' no pertenecen al mismo cluster')
     
+
+def Opt4():
+
+    end = controller.maxendstation(cont)
+    start = controller.maxstartstation(cont)
+    Min = controller.minstation(cont)
+    print("Los nombres de las 3 estaciones Top de llegada son: " + str(end))
+    print("Los nombres de las 3 estaciones Top de salida son: " + str(start))
+    print("Los nombres de las 3 estaciones menos utilizadas son: " + str(Min))
+
+def Opt5():
+
+    age = int(input('Edad del usuario: '))
+    controller.RecRoutes(cont, age)
+
+def Opt6():
+
+    categoria = categories()
+    (primera, ultima, camino)=controller.bestbyC(cont, categoria)
+    print('\nLa primera estacion es: ' + primera)
+    print('La utlima estacion es: '+ ultima)
+    print('El caminoa a seguir es: ')
+    print(camino)
+
+
 while True:
     printMenu()
 
@@ -93,10 +123,14 @@ while True:
         # cont es el controlador que se usará de acá en adelante
         cont = controller.init()
     elif int(inputs[0]) == 2:
-        executiontime = timeit.timeit(Opt2, number=1)
-        print("Tiempo de ejecución: " + str(executiontime))
+        Opt2()
     elif int(inputs[0]) == 3:
-        executiontime = timeit.timeit(Opt3, number=1)
-        print("Tiempo de ejecución: " + str(executiontime))
+        Opt3()
+    elif int(inputs[0]) == 4:
+        Opt4()
+    elif int(inputs[0]) == 5:
+        Opt5()
+    elif int(inputs[0]) == 6:
+        Opt6()
     else:
         sys.exit(0)

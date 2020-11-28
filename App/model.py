@@ -24,6 +24,8 @@
  *
  """
 import config
+import collections
+import time
 from DISClib.ADT.graph import gr
 from DISClib.ADT import map as m
 from DISClib.ADT import list as lt
@@ -31,6 +33,9 @@ from DISClib.DataStructures import listiterator as it
 from DISClib.Algorithms.Graphs import scc
 from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Utils import error as error
+from DISClib.Algorithms.Graphs import dfs
+from DISClib.DataStructures import mapentry as me
+from DISClib.ADT import stack
 assert config
 
 """
@@ -42,16 +47,226 @@ de creacion y consulta sobre las estructuras de datos.
 #                       API
 # -----------------------------------------------------
 
+def newAnalyzer():
+    try:
+        citiB = {}
+        citiB["stations"] = m.newMap(numelements=1000,
+                                    maptype="PROBING", 
+                                    comparefunction=compareStations)
+        citiB["graph"] = gr.newGraph(datastructure="ADJ_LIST",
+                                    directed=True,
+                                    size=1000,
+                                    comparefunction=compareStations,)
+        citiB["tripsInfo"] = lt.newList(datastructure="ARRAY_LIST")
+        citiB["paths"] = None
+        citiB["components"] = None
+        return citiB
+    except Exception as exp:
+        error.reraise(exp, 'model:newAnalyzer')
+
 # Funciones para agregar informacion al grafo
+
+def addTrip(citiB, trip):
+    start = trip['start station id']
+    end = trip['end station id']
+    initStation = trip['start station name']
+    endStation = trip['end station name']
+    duration = int(trip['tripduration']) 
+    addStation(citiB, trip["start station id"])
+    addStation(citiB, trip["end station id"])
+    addAbS(citiB, start, end, duration)
+
+def addStation(citiB, station_id):
+    if not gr.containsVertex(citiB["graph"], station_id):
+        gr.insertVertex(citiB["graph"], station_id)
+    return citiB
+
+
+def addAbS(citiB, start, end, duration):
+    arc = gr.getEdge(citiB["graph"], start, end) 
+    if arc is None:
+        gr.addEdge(citiB["graph"], start, end, duration)
+    return citiB
+
+
+
+
+
+
+
+
+
 
 # ==============================
 # Funciones de consulta
 # ==============================
 
+def totalStations(citiB):
+    return gr.numVertices(citiB["graph"])
+
+def totalTrips(citiB):
+    return gr.numEdges(citiB["graph"])
+
+def sameCC(sc, station_1, station_2):
+    sct = scc.KosarajuSCC(sc["graph"])
+    return scc.stronglyConnected(sct, station_1, station_2)
+
+def connectedComponents(citiB):
+    citiB["components"] = scc.KosarajuSCC(citiB["graph"])
+    return scc.connectedComponents(citiB["components"])
+
+def maxEnd(citiB):
+
+    listVertex = gr.vertices(citiB["graph"])
+    itr = it.newIterator(listVertex)
+    dictstations = {}
+    while it.hasNext(itr):
+        station = it.next(itr)
+        trips = gr.indegree(citiB["graph"], station)
+        dictstations[station] = trips
+    stations = idMax(dictstations)
+    a1 = search(stations[0], citiB)
+    a2 = search(stations[1], citiB)
+    a3 = search(stations[2], citiB)
+    a = [a1["name"], a2["name"], a3["name"]]
+    return a
+        
+
+def maxStart(citiB):
+
+    listVertex = gr.vertices(citiB["graph"])
+    itr = it.newIterator(listVertex)
+    dictstations = {}
+    while it.hasNext(itr):
+        station = it.next(itr)   
+        trips = gr.outdegree(citiB["graph"], station)
+        dictstations[station] = trips
+    stations = idMax(dictstations)
+    a1 = search(stations[0], citiB)
+    a2 = search(stations[1], citiB)
+    a3 = search(stations[2], citiB)
+    a = [a1["name"], a2["name"], a3["name"]]
+    return a
+
+def minStation(citiB):
+
+    listVertex = gr.vertices(citiB["graph"])
+    itr = it.newIterator(listVertex)
+    dictstations = {}
+    while it.hasNext(itr):
+        station = it.next(itr)  
+        trips = gr.degree(citiB["graph"], station)
+        dictstations[station]=trips
+    stations = idLeast(dictstations)
+    a1 = search(stations[0], citiB)
+    a2 = search(stations[1], citiB)
+    a3 = search(stations[2], citiB)
+    a = [a1["name"], a2["name"], a3["name"]]
+    return a
+
+def RecRoutes(citiB, age):
+
+    iterator = it.newIterator(m.keySet(citiB['stops']))
+    start = 'Ninguna'
+    maxOut = 0
+    end = 'Ninguna'
+    end2 = 'Ninguna'
+    maxEnd = 0
+    while it.hasNext(iterator):
+        element = it.next(iterator)
+        dicc = m.get(citiB['stops'],element)
+        s = dicc['value'][2]
+        arrival = dicc['value'][3]
+        if s[categories(age)] > maxOut:
+            max_salida = s[categories(age)]
+            start = dicc['key']
+        if arrival[categories(age)] > maxEnd:
+            end2 = end
+            maxEnd = arrival[categories(age)]
+            end = dicc['key']
+    if end == start:
+        end = end2
+    route = []
+    dijsktra = djk.Dijkstra(citiB['graph'],str(start))
+    if djk.hasPathTo(dijsktra, end):
+        if djk.hasPathTo(dijsktra, end):
+            routelt = djk.pathTo(dijsktra, end)
+            iterator = it.newIterator(routelt)
+            route.append(start)
+            while it.hasNext(iterator):
+                element = it.next(iterator)
+                route.append(element['vertexB'])
+    else:
+        route = 'No hay ruta'
+    return (start, end, route)
+
+
 # ==============================
 # Funciones Helper
 # ==============================
 
+def search(id, citiB):
+
+    mp = citiB['info']
+    entry = m.get(mp, id)
+    value = me.getValue(entry)
+    return value
+
+def idMax(dicc):
+
+    list1 = list(dicc.values())
+    list1.sort()
+    max1 = list1[-1]
+    max2 = list1[-2]
+    max3 = list1[-3]
+    list2 = []
+    for i in dicc:
+        if dicc[i] == max1 or dicc[i] == max2 or dicc[i] == max3 and dicc[i]:
+            list2.append(i)
+    a = [list2[0],list2[1],list2[2]] 
+    return a 
+
+def idLeast(dicc):
+
+    list1 = list(dicc.values())
+    list1.sort()
+    max1 = list1[-1]
+    max2 = list1[-2]
+    max3 = list1[-3]
+    list2 = []
+    for i in dicc:
+        if dicc[i] == max1 or dicc[i] == max2 or dicc[i] == max3 and dicc[i]:
+            list2.append(i)
+    a = [list2[0],list2[1],list2[2]] 
+    return a
+
+
+def categories(age):
+
+    if age in range(0,11):
+        key = '0-10'
+    elif age in range(11,21):
+        key = '11-20'
+    elif age in range(21,31):
+        key = '21-30'
+    elif age in range(31,41):
+        key = '31-40'
+    elif age in range(41,51):
+        key = '41-50'
+    elif age in range(51,61):
+        key = '51-60'
+    else:
+        key = '60+'
 # ==============================
 # Funciones de Comparacion
 # ==============================
+
+def compareStations(s1, s2):
+    s1 = int(s1)
+    s2 = int(s2["key"])
+    if s1 == s2:
+        return 0
+    elif s1 > s2:
+        return 1
+    else:
+        return -1
