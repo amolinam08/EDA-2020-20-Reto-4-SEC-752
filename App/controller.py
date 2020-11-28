@@ -52,22 +52,56 @@ def init():
 #  de datos en los modelos
 # ___________________________________________________
 
-def loadFile(citiB1,tripfile):
+def loadFile(citiB,tripfile):
     tripfile = cf.data_dir + tripfile
     input_file = csv.DictReader(open(tripfile, encoding="utf-8"),delimiter=",")
     for trip in input_file:
-        model.addTrip(citiB1, trip)
-    return citiB1
+        model.addTrip(citiB, trip)
+    return citiB
 
 
-def loadTrips(citiB1):
+def loadTrips(citiB):
     for filename in os.listdir(cf.data_dir):
         if filename.endswith('.csv'):
             print('Cargando archivo: ' + filename)
-            loadFile(cityB1, filename)
-    return citiB1
+            loadFile(citiB, filename)
+    return citiB
 
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
+
+
+def totalStations(analyzer):
+    return model.totalStations(analyzer)
+
+
+def totalTrips(analyzer):
+    return model.totalTrips(analyzer)
+
+
+def sameCC(sc, station_1, station_2):
+    return model.sameCC(sc, station_1, station_2)
+
+
+def connectedComponents(citiB):
+    return model.connectedComponents(citiB)
+    
+def maxEnd(citiB):
+    g = citiB
+    return model.maxEnd(g)
+
+def maxStart(citiB):
+    g = citiB
+    return model.maxStart(g)
+
+def minStation(citiB):
+    g = citiB
+    return model.minStation(g)   
+
+def RecRoutes(citiB, age):
+    a = model.RecRoutes(citiB, age)
+    print ('La estación mas concurrida por el grupo de edad seleccionada es la: ', a[0])
+    print ('La estación a la que más llega gente del grupo de edad seleccionada es la: ', a[1])
+    print ('La ruta entre esas estaciones es: ', a[2])
 
