@@ -90,13 +90,6 @@ def addAbS(citiB, start, end, duration):
 
 
 
-
-
-
-
-
-
-
 # ==============================
 # Funciones de consulta
 # ==============================
@@ -200,6 +193,27 @@ def RecRoutes(citiB, age):
         route = 'No hay ruta'
     return (start, end, route)
 
+def interestRoutes(citiB, lat1, lon1, lat2, lon2)
+
+    vertex = gr.vertices(citiB["connections"])
+    iterator = it.newIterator(m.keySet(citiB['vertex']))
+    start = []
+    end = []
+    while it.hasNext(iterator):
+        element = it.next(iterator)
+        locationp = m.get(analyzer["location"],element)
+        location = me.getValue(locationp)
+
+        dist1 = dist(lat1,location[0],lon1,location[1])
+        dist2 = dist(lat2,location[0],lon2,location[1])
+        
+        try: 
+            if start == []:
+                start = (element,dist1)
+            elif dist1 < start[1] or (dist1 <= start[1] and gr.outdegree(citiB["connections"],element)>gr.outdegree(citiB["connections"],start[1])):
+                start = (element,dist1)   
+        
+
 
 # ==============================
 # Funciones Helper
@@ -257,6 +271,22 @@ def categories(age):
         key = '51-60'
     else:
         key = '60+'
+
+def dist(lat1, lat2, lon1, lon2):
+
+    if type(lat1) == float and type(lon1) == float:
+        lon1 = radians(lon1) 
+        lon2 = radians(lon2) 
+        lat1 = radians(lat1) 
+        lat2 = radians(lat2)    
+        dlon = lon2 - lon1  
+        dlat = lat2 - lat1 
+        a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+        b = 2 * asin(sqrt(a))   
+        c = 6371
+        return round((b * c),2)
+    else:
+        return a 
 # ==============================
 # Funciones de Comparacion
 # ==============================
