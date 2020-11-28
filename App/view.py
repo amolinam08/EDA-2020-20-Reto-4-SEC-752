@@ -106,12 +106,11 @@ def Opt5():
 
 def Opt6():
 
-    categoria = categories()
-    (primera, ultima, camino)=controller.bestbyC(cont, categoria)
-    print('\nLa primera estacion es: ' + primera)
-    print('La utlima estacion es: '+ ultima)
-    print('El caminoa a seguir es: ')
-    print(camino)
+    lat1 = float(input('Ingrese la latitud del punto de salida: '))
+    lon1 = float(input('Ingrese la longitud del punto de salida: '))
+    lat2 = float(input('Ingrese la latitud del punto de llegada: '))
+    lon2 = float(input('Ingrese la longitud del punto de llegada: '))
+    controller.interestRoute(cont, lat1, lon1, lat2, lon2)
 
 
 while True:

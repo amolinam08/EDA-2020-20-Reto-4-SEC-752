@@ -105,3 +105,9 @@ def RecRoutes(citiB, age):
     print ('La estación a la que más llega gente del grupo de edad seleccionada es la: ', a[1])
     print ('La ruta entre esas estaciones es: ', a[2])
 
+def interestRoute(citiB, lat1, lon1, lat2, lon2):
+
+    a = model.interestRoute(citiB, lat1, lon1, lat2, lon2)
+    print ('La estación más cercana a su punto de salida es la: ', a[0])
+    print ('La estación más cercana a su destino es la: ', a[1])
+    print ('La ruta entre las estaciones es: ', a[2])
